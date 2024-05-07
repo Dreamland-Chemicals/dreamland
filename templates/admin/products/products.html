@@ -27,8 +27,8 @@
                                 <img alt="{{ product.name }}" src="{{ url_for('static', filename=product.img_link) }}" class="img-fluid">
                             </div>
                             <div class="card-footer">
-                                <span class="font-weight-bold text-info">Cost Price : R {{ product.cost_price| number }}.00</span>
-                                <span class="font-weight-bold text-info">Sale Price : R {{ product.sale_price| number }}.00</span>
+                                <h6 class="font-weight-bold text-info">Cost Price : R {{ product.cost_price| number }}.00</h6>
+                                <h6 class="font-weight-bold text-info">Sale Price : R {{ product.sale_price| number }}.00</h6>
                             </div>
                         </div>
                     {% endfor %}
