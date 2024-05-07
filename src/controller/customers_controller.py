@@ -37,6 +37,7 @@ class CustomerController(Controllers):
     def init_app(self, app: Flask):
         super().init_app(app=app)
 
+    @error_handler
     async def add_temp_order(self, order: Order):
         temp_orders_list: list[Order] = self.temp_cart_items.get(order.customer_id, [])
         order_merged = False
@@ -51,6 +52,7 @@ class CustomerController(Controllers):
                     break
         return self.temp_cart_items[order.customer_id]
 
+    @error_handler
     async def get_temp_orders(self, customer_id: str) -> list[Order]:
         """
         **get_temp_order**
@@ -60,6 +62,7 @@ class CustomerController(Controllers):
         """
         return self.temp_cart_items.get(customer_id, [])
 
+    @error_handler
     async def get_temp_order(self, customer_id: str) -> Order:
         """
 
@@ -70,6 +73,7 @@ class CustomerController(Controllers):
             return self.temp_cart_items.get(customer_id, [])[-1]
         return None
 
+    @error_handler
     async def get_order_by_order_id(self, customer_id: str, order_id: str):
         """
 
@@ -82,6 +86,7 @@ class CustomerController(Controllers):
             if order.order_id == order_id:
                 return order
 
+    @error_handler
     async def add_items_to_temp_order(self, customer_id: str, order_id: str, order_item: OrderItem):
         """
 
@@ -99,6 +104,7 @@ class CustomerController(Controllers):
         self.temp_cart_items[customer_id] = temp_orders_list
         return temp_orders_list
 
+    @error_handler
     async def remove_items_from_temp_order(self, customer_id: str, order_id: str, item_id: str):
         temp_orders_list: Order | list[Order] = self.temp_cart_items.get(customer_id, [])
         for order in temp_orders_list.copy():
@@ -113,6 +119,7 @@ class CustomerController(Controllers):
 
         self.temp_cart_items[customer_id] = temp_orders_list
 
+    @error_handler
     async def remove_order_from_temp(self, order: Order):
         temp_orders_list: Order | list[Order] = self.temp_cart_items.get(order.customer_id, [])
         for order_ in temp_orders_list.copy():
@@ -120,7 +127,7 @@ class CustomerController(Controllers):
                 temp_orders_list.remove(order)
                 self.temp_cart_items[order.customer_id] = temp_orders_list
 
-    # noinspection DuplicatedCode
+    @error_handler
     async def add_customer_details(self, customer_details: CustomerDetails):
         with self.get_session() as session:
             # Query the database for the customer details
@@ -169,6 +176,7 @@ class CustomerController(Controllers):
             session.commit()
             return customer_details
 
+    @error_handler
     async def get_customer_details(self, customer_id: str) -> CustomerDetails | None:
         with self.get_session() as session:
             customer_orm: CustomerDetailsORM = session.query(
@@ -178,6 +186,7 @@ class CustomerController(Controllers):
                 return CustomerDetails(**customer_orm.to_dict())
             return None
 
+    @error_handler
     async def get_all_customers(self) -> list[CustomerDetails]:
         """
 
@@ -330,6 +339,7 @@ class CustomerController(Controllers):
     async def get_countries(self):
         return self.countries
 
+    @error_handler
     async def add_update_order_to_database(self, order: Order) -> Order:
         """
 
@@ -369,6 +379,7 @@ class CustomerController(Controllers):
             session.commit()
             return order
 
+    @error_handler
     async def get_orders_by_status(self, status: str) -> list[Order]:
         """
             class OrderStatus(Enum):
@@ -386,6 +397,7 @@ class CustomerController(Controllers):
             orders_list = session.query(OrderORM).filter_by(status=status).all()
             return [Order(**order_orm.to_dict()) for order_orm in orders_list if isinstance(order_orm, OrderORM)]
 
+    @error_handler
     async def customer_order_by_order_id(self, order_id: str) -> Order:
         """
 
@@ -396,6 +408,7 @@ class CustomerController(Controllers):
             order_orm = session.query(OrderORM).get(order_id)
             return Order(**order_orm.to_dict())
 
+    @error_handler
     async def email_invoice(self, email_address: str, order: Order):
         """
 
@@ -430,6 +443,7 @@ class CustomerController(Controllers):
         await send_mail.send_mail_resend(email=email)
         return email
 
+    @error_handler
     async def add_update_contact_form(self, contact_details: ContactForm):
         """
 
@@ -442,12 +456,14 @@ class CustomerController(Controllers):
             session.commit()
             return contact_details
 
+    @error_handler
     async def get_all_unresolved_issues(self):
         with self.get_session() as session:
             contact_form_list = session.query(ContactFormORM).filter_by(issue_resolved=False).all()
             return [ContactForm(**contact_orn.to_dict()) for contact_orn in contact_form_list
                     if isinstance(contact_orn, ContactFormORM)]
 
+    @error_handler
     async def get_contact_message(self, contact_id: str) -> ContactForm:
         """
 

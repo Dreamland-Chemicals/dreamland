@@ -1,7 +1,7 @@
 from flask import Flask
 
 from src.database.models.orders import Order, OrderItem, OrderStatus
-from src.controller import Controllers
+from src.controller import Controllers, error_handler
 from src.database.sql.orders import OrderORM, OrderItemORM
 
 
@@ -17,6 +17,7 @@ class OrdersController(Controllers):
         """
         super().init_app(app=app)
 
+    @error_handler
     async def return_customer_orders(self, customer_id: str) -> list[Order]:
         """
 
@@ -27,6 +28,7 @@ class OrdersController(Controllers):
             customers_orders = session.query(OrderORM).filter_by(customer_id=customer_id).all()
             return [Order(**order_orm.to_dict()) for order_orm in customers_orders if isinstance(order_orm, customers_orders)]
 
+    @error_handler
     async def add_order(self, order: Order) -> Order | None:
         """
         Add or update an order.
@@ -69,6 +71,7 @@ class OrdersController(Controllers):
             # Return the updated or new order
             return order
 
+    @error_handler
     async def get_order_by_order_id(self, order_id: str) -> Order | None:
         """
 
@@ -81,6 +84,7 @@ class OrdersController(Controllers):
                 return Order(**order_orm.to_dict())
             return None
 
+    @error_handler
     async def add_order_item(self, item: OrderItem) -> bool:
         """
         Add an order item to an existing order.
@@ -110,6 +114,7 @@ class OrdersController(Controllers):
             session.commit()
             return True
 
+    @error_handler
     async def remove_order_item(self, item_id: str) -> bool:
         """
         Remove an order item.
@@ -128,11 +133,13 @@ class OrdersController(Controllers):
             session.commit()
             return True
 
+    @error_handler
     async def return_pending_orders(self):
         with self.get_session() as sessioo:
             pending_orders = sessioo.query(OrderORM).filter_by(status=OrderStatus.PENDING.value).all()
             return [Order(**order_orm.to_dict()) for order_orm in pending_orders if isinstance(order_orm, OrderORM)]
 
+    @error_handler
     async def return_cancelled_orders(self):
         """
 
@@ -142,16 +149,19 @@ class OrdersController(Controllers):
             pending_orders = sessioo.query(OrderORM).filter_by(status=OrderStatus.CANCELLED.value).all()
             return [Order(**order_orm.to_dict()) for order_orm in pending_orders if isinstance(order_orm, OrderORM)]
 
+    @error_handler
     async def return_delivered_orders(self):
         with self.get_session() as sessioo:
             pending_orders = sessioo.query(OrderORM).filter_by(status=OrderStatus.DELIVERED.value).all()
             return [Order(**order_orm.to_dict()) for order_orm in pending_orders if isinstance(order_orm, OrderORM)]
 
+    @error_handler
     async def return_shipped_orders(self):
         with self.get_session() as sessioo:
             pending_orders = sessioo.query(OrderORM).filter_by(status=OrderStatus.SHIPPED.value).all()
             return [Order(**order_orm.to_dict()) for order_orm in pending_orders if isinstance(order_orm, OrderORM)]
 
+    @error_handler
     async def return_orders_in_processing(self):
         with self.get_session() as sessioo:
             pending_orders = sessioo.query(OrderORM).filter_by(status=OrderStatus.PROCESSING.value).all()

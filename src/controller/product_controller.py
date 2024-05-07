@@ -70,6 +70,7 @@ class ProductController(Controllers):
         else:
             return None
 
+    @error_handler
     async def get_product(self, product_id: str) -> Product | None:
         """
 
@@ -82,6 +83,7 @@ class ProductController(Controllers):
                 return Product(**product_orm.to_dict())
             return None
 
+    @error_handler
     async def get_products(self) -> list[Product]:
         """
 
@@ -92,6 +94,7 @@ class ProductController(Controllers):
             return [Product(**product_orm.to_dict()) for product_orm in products_list_orm
                     if isinstance(product_orm, ProductsORM)]
 
+    @error_handler
     async def get_categories(self) -> list[Category]:
         """
 
@@ -102,6 +105,7 @@ class ProductController(Controllers):
             return [Category(**category_orm.to_dict()) for category_orm in category_list_orm
                     if isinstance(category_orm, CategoryORM)]
 
+    @error_handler
     async def add_category(self, category_detail: Category) -> Category:
         """
 
@@ -125,6 +129,7 @@ class ProductController(Controllers):
 
             return category_detail
 
+    @error_handler
     async def save_category_image(self, category_name: str, image) -> str:
         """
             will return image link
@@ -146,6 +151,7 @@ class ProductController(Controllers):
         image.save(save_file)
         return destination_image_path
 
+    @error_handler
     async def get_category_details(self, category_name: str) -> Category | None:
         """
 
@@ -160,6 +166,7 @@ class ProductController(Controllers):
 
             return None
 
+    @error_handler
     async def get_category_products(self, category_id: str) -> list[Product]:
         """
 
@@ -172,6 +179,7 @@ class ProductController(Controllers):
             return [Product(**product_orm.to_dict()) for product_orm in products_orm_list
                     if isinstance(product_orm, ProductsORM)]
 
+    @error_handler
     async def add_category_product(self, category_id: str, product: Product):
         """
 
@@ -205,6 +213,7 @@ class ProductController(Controllers):
 
             return product
 
+    @error_handler
     async def add_product_image(self, category_id: str, product_name: str, image) -> str:
         """
 
