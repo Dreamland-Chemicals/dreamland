@@ -16,15 +16,21 @@ from pprint import pprint
 @cart_route.get("/shopping-cart")
 @user_details
 async def get_cart(user: User | None):
-    social_url = url_for('cart.get_cart', _external=True)
 
-    customer_details = await customer_controller.get_customer_details(customer_id=user.customer_id)
+    social_url = url_for('cart.get_cart', _external=True)
+    # if user:
+    #     customer_details = await customer_controller.get_customer_details(customer_id=user.customer_id)
+    # else:
+    #     customer_details = {}
 
     products_list: list[Product] = await product_controller.get_products()
     categories_list: list[Category] = await product_controller.get_categories()
 
-    context = dict(user=user, social_url=social_url, category_list=categories_list, products_list=products_list,
-                   customer=customer_details)
+    context = dict(user=user,
+                   social_url=social_url,
+                   category_list=categories_list,
+                   products_list=products_list)
+
     return render_template('cart/cart.html', **context)
 
 
