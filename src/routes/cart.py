@@ -64,11 +64,11 @@ async def get_orders(user: User | None):
                    customer=customer_details,
                    current_orders=temp_orders)
 
-    if customer_details and customer_details.postal_id and customer_details.postal_id == customer_details.delivery_address_id:
+    if customer_details and customer_details.postal_id and (customer_details.postal_id == customer_details.delivery_address_id):
         postal_address = await customer_controller.get_postal_address(postal_id=customer_details.postal_id)
         context.update(edit_address=postal_address, postal_address=postal_address, address_type="postal")
         print(f"Postal Address : {postal_address}")
-    elif customer_details and customer_details.address_id and customer_details.address_id == customer_details.delivery_address_id:
+    elif customer_details and customer_details.address_id and (customer_details.address_id == customer_details.delivery_address_id):
         physical_address = await customer_controller.get_address(address_id=customer_details.address_id)
         context.update(edit_address=physical_address, physical_address=physical_address, address_type="physical")
         print(f"Physical Address : {physical_address}")
