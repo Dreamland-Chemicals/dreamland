@@ -9,12 +9,11 @@ from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
 
 from src.controller import error_handler, UnauthorizedError, Controllers
-from src.database.models.profile import Profile, ProfileUpdate
-from src.database.models.users import User, CreateUser, UserUpdate, PayPal
+from src.database.models.profile import Profile
+from src.database.models.users import User, CreateUser, PayPal
 from src.database.sql.user import UserORM, PayPalORM
 from src.emailer import EmailModel
 from src.main import send_mail
-import requests
 
 
 class UserController(Controllers):
@@ -143,21 +142,21 @@ class UserController(Controllers):
         :return: A dictionary containing the result of the email sending operation, or None if an error occurred.
         """
         # TODO please complete the method to send the password reset email
-        password_reset_subject: str = "last-shelter.vip Password Reset Request"
+        password_reset_subject: str = "dreamland chemicals Password Reset Request"
         # Assuming you have a function to generate the password reset link
         password_reset_link: str = self.generate_password_reset_link(email)
 
         html = f"""
         <html>
         <body>
-            <h2>Funeral Manager - funeral.org</h2>
+            <h2>Dreamland Chemicals</h2>
             <p>Hello,</p>
-            <p>We received a password reset request for your https://funeral-manager.org account. 
+            <p>We received a password reset request for your https://dreamland-chemicals.org account. 
             Please click the link below to reset your password:</p>
             <a href="{password_reset_link}">{password_reset_link}</a>
             <p>If you didn't request a password reset, you can ignore this email.</p>
             <p>Thank you,</p>
-            <p>The Rental Manager Team</p>
+            <p>Dreamland Chemicals Team</p>
         </body>
         </html>
         """
@@ -176,7 +175,7 @@ class UserController(Controllers):
         """
         token = str(uuid.uuid4())  # Assuming you have a function to generate a random token
         self._verification_tokens[token] = int(time.time())
-        password_reset_link = f"https://funeral-manager.org/admin/reset-password?token={token}&email={email}"
+        password_reset_link = f"https://dreamland-chemicals.org/admin/reset-password?token={token}&email={email}"
 
         return password_reset_link
 
@@ -277,13 +276,13 @@ class UserController(Controllers):
         :param user: The user to send the verification email to.
         """
         token = str(uuid.uuid4())  # Assuming you have a function to generate a verification token
-        verification_link = f"https://funeral-manager.org/dashboard/verify-email?token={token}&email={user.email}"
+        verification_link = f"https://dreamland-chemicals.org/dashboard/verify-email?token={token}&email={user.email}"
         self._verification_tokens[token] = dict(email=user.email, timestamp=int(time.time()))
         # Render the email template
         email_html = render_template("email_templates/verification_email.html", user=user,
                                      verification_link=verification_link, password=password)
 
-        msg = EmailModel(subject_="last-shelter.vip Email Verification",
+        msg = EmailModel(subject_="dreamland-chemicals.org Email Verification",
                          to_=user.email,
                          html_=email_html)
 
